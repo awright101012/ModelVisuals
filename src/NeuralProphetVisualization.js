@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { BarChart2, TrendingUp, RefreshCcw, GitMerge, ArrowRight, CheckCircle, HelpCircle, Layers } from 'lucide-react';
+import { BarChart2, TrendingUp, RefreshCcw, GitMerge, ArrowRight, CheckCircle, HelpCircle, Layers, ChevronDown, ChevronUp, ExternalLink, Settings, Activity, Sliders } from 'lucide-react';
 
 const NeuralProphetVisualization = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [showTooltip, setShowTooltip] = useState(false);
-  const [iterations, setIterations] = useState(1);
   const [animationKey, setAnimationKey] = useState(0);
+  const [showMathDetails, setShowMathDetails] = useState(false);
+  const [showArchitectureOverview, setShowArchitectureOverview] = useState(false);
 
   useEffect(() => {
     setAnimationKey(prev => prev + 1);
-  }, [activeStep, iterations]);
+  }, [activeStep]);
 
   const steps = [
     { name: 'Time Series Input', icon: BarChart2, color: '#f0f0ff' },
@@ -27,7 +28,6 @@ const NeuralProphetVisualization = () => {
       setActiveStep(activeStep + 1);
     } else {
       setActiveStep(0);
-      setIterations(iterations + 1);
     }
   };
 
@@ -36,9 +36,190 @@ const NeuralProphetVisualization = () => {
       setActiveStep(activeStep - 1);
     } else {
       setActiveStep(steps.length - 1);
-      setIterations(Math.max(1, iterations - 1));
     }
   };
+
+  const getLearnMoreLink = (step) => {
+    const links = [
+      "https://neuralprophet.com/",
+      "https://neuralprophet.com/model/trend/",
+      "https://neuralprophet.com/model/seasonality/",
+      "https://neuralprophet.com/model/auto-regression/",
+      "https://neuralprophet.com/model/covariates/",
+      "https://neuralprophet.com/model/architecture/",
+      "https://neuralprophet.com/model/training/",
+      "https://neuralprophet.com/model/forecasting/"
+    ];
+    return links[step];
+  };
+
+  const getModelArchitectureOverview = () => (
+    <div className="bg-white p-6 rounded-lg shadow-md mt-6">
+      <h3 className="text-2xl font-bold mb-4">Model Architecture Overview</h3>
+      <svg width="1000" height="500" viewBox="0 0 1000 500">
+        {/* Background */}
+        <rect x="0" y="0" width="1000" height="500" fill="#f0f0f0" />
+        
+        {/* Title */}
+        <text x="500" y="30" textAnchor="middle" fill="#333" fontSize="24" fontWeight="bold">NeuralProphet Model Architecture</text>
+        
+        {/* Step Labels */}
+        <text x="100" y="70" textAnchor="middle" fill="#333" fontSize="12">Step 1</text>
+        <text x="300" y="70" textAnchor="middle" fill="#333" fontSize="12">Step 2</text>
+        <text x="600" y="70" textAnchor="middle" fill="#333" fontSize="12">Step 3</text>
+        <text x="900" y="70" textAnchor="middle" fill="#333" fontSize="12">Step 4</text>
+        
+        {/* Boxes */}
+        <rect x="40" y="90" width="120" height="60" fill="#e6f7ff" stroke="#1890ff" strokeWidth="2" rx="10" />
+        <text x="100" y="125" textAnchor="middle" fill="#333" fontSize="14" fontWeight="bold">Time Series Input</text>
+        
+        <rect x="240" y="90" width="120" height="60" fill="#fff7e6" stroke="#faad14" strokeWidth="2" rx="10" />
+        <text x="300" y="125" textAnchor="middle" fill="#333" fontSize="14" fontWeight="bold">Trend</text>
+        
+        <rect x="440" y="90" width="320" height="240" fill="#f9f0ff" stroke="#722ed1" strokeWidth="2" rx="10" />
+        <text x="600" y="115" textAnchor="middle" fill="#333" fontSize="16" fontWeight="bold">Neural Network</text>
+        
+        <rect x="840" y="180" width="120" height="60" fill="#e6fffb" stroke="#13c2c2" strokeWidth="2" rx="10" />
+        <text x="900" y="215" textAnchor="middle" fill="#333" fontSize="14" fontWeight="bold">Forecast</text>
+        
+        <rect x="240" y="290" width="120" height="60" fill="#f0f5ff" stroke="#2f54eb" strokeWidth="2" rx="10" />
+        <text x="300" y="325" textAnchor="middle" fill="#333" fontSize="14" fontWeight="bold">Covariates</text>
+        
+        <rect x="240" y="360" width="120" height="60" fill="#f6ffed" stroke="#52c41a" strokeWidth="2" rx="10" />
+        <text x="300" y="395" textAnchor="middle" fill="#333" fontSize="14" fontWeight="bold">Seasonality</text>
+        
+        <rect x="240" y="430" width="120" height="60" fill="#fff1f0" stroke="#f5222d" strokeWidth="2" rx="10" />
+        <text x="300" y="465" textAnchor="middle" fill="#333" fontSize="14" fontWeight="bold">Auto-Regression</text>
+        
+        {/* Neural Network Nodes */}
+        {[0, 1, 2].map((_, i) => (
+          <g key={i}>
+            <circle cx="490" cy={170 + i * 70} r="15" fill="#ff4d4f" />
+            <circle cx="600" cy={170 + i * 70} r="15" fill="#1890ff" />
+            <circle cx="710" cy={170 + i * 70} r="15" fill="#ff4d4f" />
+          </g>
+        ))}
+        
+        {/* Neural Network Connections */}
+        <g>
+          {/* Horizontal connections */}
+          {[0, 1, 2].map((_, i) => (
+            <g key={`h${i}`}>
+              <line x1="505" y1={170 + i * 70} x2="585" y2={170 + i * 70} stroke="#722ed1" strokeWidth="1" />
+              <line x1="615" y1={170 + i * 70} x2="695" y2={170 + i * 70} stroke="#722ed1" strokeWidth="1" />
+            </g>
+          ))}
+          
+          {/* Vertical connections */}
+          {[0, 1].map((_, i) => (
+            <g key={`v${i}`}>
+              <line x1="490" y1={185 + i * 70} x2="490" y2={225 + i * 70} stroke="#722ed1" strokeWidth="1" />
+              <line x1="600" y1={185 + i * 70} x2="600" y2={225 + i * 70} stroke="#722ed1" strokeWidth="1" />
+              <line x1="710" y1={185 + i * 70} x2="710" y2={225 + i * 70} stroke="#722ed1" strokeWidth="1" />
+            </g>
+          ))}
+          
+          {/* Diagonal connections */}
+          {[0, 1].map((_, i) => (
+            <g key={`d${i}`}>
+              {/* Left to right diagonals */}
+              <line x1="505" y1={185 + i * 70} x2="585" y2={225 + i * 70} stroke="#722ed1" strokeWidth="1" />
+              <line x1="615" y1={185 + i * 70} x2="695" y2={225 + i * 70} stroke="#722ed1" strokeWidth="1" />
+              
+              {/* Right to left diagonals */}
+              <line x1="585" y1={185 + i * 70} x2="505" y2={225 + i * 70} stroke="#722ed1" strokeWidth="1" />
+              <line x1="695" y1={185 + i * 70} x2="615" y2={225 + i * 70} stroke="#722ed1" strokeWidth="1" />
+            </g>
+          ))}
+        </g>
+        
+        {/* Arrows */}
+        <defs>
+          <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#333" />
+          </marker>
+        </defs>
+        
+        <path d="M160,120 H239" stroke="#333" strokeWidth="2" markerEnd="url(#arrowhead)" fill="none" />
+        <path d="M360,120 H439" stroke="#333" strokeWidth="2" markerEnd="url(#arrowhead)" fill="none" />
+        <path d="M760,210 H839" stroke="#333" strokeWidth="2" markerEnd="url(#arrowhead)" fill="none" />
+        
+        <path d="M160,120 V320 H239" stroke="#333" strokeWidth="2" markerEnd="url(#arrowhead)" fill="none" />
+        <path d="M160,120 V390 H239" stroke="#333" strokeWidth="2" markerEnd="url(#arrowhead)" fill="none" />
+        <path d="M160,120 V460 H239" stroke="#333" strokeWidth="2" markerEnd="url(#arrowhead)" fill="none" />
+        
+        <path d="M360,320 H400 V210 H439" stroke="#333" strokeWidth="2" markerEnd="url(#arrowhead)" fill="none" />
+        <path d="M360,390 H380 V210 H439" stroke="#333" strokeWidth="2" markerEnd="url(#arrowhead)" fill="none" />
+        <path d="M360,460 H420 V210 H439" stroke="#333" strokeWidth="2" markerEnd="url(#arrowhead)" fill="none" />
+      </svg>
+      
+      <div className="mt-6 text-gray-700">
+        <h4 className="text-xl font-semibold mb-2">Data Flow Explanation:</h4>
+        <ol className="list-decimal pl-5">
+          <li>Time series data is input into the model.</li>
+          <li>The data is processed through four main components:
+            <ul className="list-disc pl-5 mt-2">
+              <li>Trend component captures long-term progression.</li>
+              <li>Seasonality identifies recurring patterns.</li>
+              <li>Auto-regression learns from past values.</li>
+              <li>Covariates incorporate additional influencing factors.</li>
+            </ul>
+          </li>
+          <li>All components are processed through a neural network, allowing for complex interactions.</li>
+          <li>The model outputs the final forecast.</li>
+        </ol>
+      </div>
+
+      <div className="mt-6">
+        <h4 className="text-xl font-semibold mb-2">Key Features:</h4>
+        <ul className="list-disc pl-5">
+          <li>AR-Net based module for multi-step ahead forecasting</li>
+          <li>Custom regularization for improved generalization</li>
+          <li>PyTorch-based training with mini-batch SGD</li>
+          <li>Automatic hyperparameter selection (learning rate, batch size)</li>
+          <li>Component-wise forecasts for interpretability</li>
+          <li>Flexible model configuration (add/remove components)</li>
+          <li>Special handling for events/holidays and future regressors</li>
+          <li>Uncertainty estimation in predictions</li>
+        </ul>
+      </div>
+
+      <div className="mt-6">
+        <h4 className="text-xl font-semibold mb-2">Comparison with Prophet:</h4>
+        <table className="w-full border-collapse border border-gray-300">
+          <thead>
+            <tr className="bg-gray-100">
+              <th className="border border-gray-300 p-2">Feature</th>
+              <th className="border border-gray-300 p-2">NeuralProphet</th>
+              <th className="border border-gray-300 p-2">Prophet</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td className="border border-gray-300 p-2">Model Base</td>
+              <td className="border border-gray-300 p-2">Neural Network</td>
+              <td className="border border-gray-300 p-2">Additive Model</td>
+            </tr>
+            <tr>
+              <td className="border border-gray-300 p-2">Auto-regression</td>
+              <td className="border border-gray-300 p-2">Yes (AR-Net)</td>
+              <td className="border border-gray-300 p-2">No</td>
+            </tr>
+            <tr>
+              <td className="border border-gray-300 p-2">Flexibility</td>
+              <td className="border border-gray-300 p-2">High</td>
+              <td className="border border-gray-300 p-2">Moderate</td>
+            </tr>
+            <tr>
+              <td className="border border-gray-300 p-2">Interpretability</td>
+              <td className="border border-gray-300 p-2">High</td>
+              <td className="border border-gray-300 p-2">High</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
 
   return (
     <div className="p-6 bg-gray-100 rounded-lg shadow-lg">
@@ -50,7 +231,6 @@ const NeuralProphetVisualization = () => {
         >
           Previous Step
         </button>
-        <div className="text-xl font-semibold">Iteration: {iterations}</div>
         <button 
           onClick={handleNextStep}
           className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
@@ -79,17 +259,40 @@ const NeuralProphetVisualization = () => {
       <div className="bg-white p-6 rounded-lg shadow-md relative">
         <h3 className="text-2xl font-bold mb-4">{steps[activeStep].name}</h3>
         <div className="mb-4 flex justify-center" key={animationKey}>
-          {getStepVisualization(activeStep, iterations)}
+          {getStepVisualization(activeStep)}
         </div>
         <div className="text-left">
           <p className="text-gray-700 mb-4">
-            {getStepDescription(activeStep, iterations)}
+            {getStepDescription(activeStep)}
           </p>
-          <div className="mt-4 p-4 bg-blue-100 rounded-lg">
-            <h4 className="text-lg font-semibold mb-2">Mathematical Concept:</h4>
-            <pre className="font-mono text-sm whitespace-pre-wrap">{getStepMathConcept(activeStep)}</pre>
+          <div className="mt-4">
+            <button
+              onClick={() => setShowMathDetails(!showMathDetails)}
+              className="flex items-center text-blue-500 hover:text-blue-600 transition-colors"
+            >
+              {showMathDetails ? <ChevronUp className="w-4 h-4 mr-2" /> : <ChevronDown className="w-4 h-4 mr-2" />}
+              {showMathDetails ? "Hide Mathematical Details" : "Show Mathematical Details"}
+            </button>
           </div>
-          <MathKey step={activeStep} />
+          {showMathDetails && (
+            <>
+              <div className="mt-4 p-4 bg-blue-100 rounded-lg">
+                <h4 className="text-lg font-semibold mb-2">Mathematical Concept:</h4>
+                <pre className="font-mono text-sm whitespace-pre-wrap">{getStepMathConcept(activeStep)}</pre>
+              </div>
+              <MathKey step={activeStep} />
+            </>
+          )}
+          <div className="mt-4">
+            <a
+              href={getLearnMoreLink(activeStep)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
+            >
+              Learn More <ExternalLink className="w-4 h-4 ml-2" />
+            </a>
+          </div>
         </div>
         <div 
           className="absolute top-4 right-4 cursor-pointer"
@@ -104,11 +307,22 @@ const NeuralProphetVisualization = () => {
           </div>
         )}
       </div>
+      
+      <div className="mt-6">
+        <button
+          onClick={() => setShowArchitectureOverview(!showArchitectureOverview)}
+          className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 transition-colors"
+        >
+          {showArchitectureOverview ? "Hide" : "Show"} Model Architecture Overview
+        </button>
+      </div>
+      
+      {showArchitectureOverview && getModelArchitectureOverview()}
     </div>
   );
 };
 
-const getStepVisualization = (step, iterations) => {
+const getStepVisualization = (step) => {
   const width = 400;
   const height = 300;
   const visualizations = [
@@ -255,7 +469,7 @@ const getStepVisualization = (step, iterations) => {
   return visualizations[step];
 };
 
-const getStepDescription = (step, iterations) => {
+const getStepDescription = (step) => {
   const descriptions = [
     `Loading time series data with timestamps and corresponding values. This step prepares the dataset for analysis and forecasting.`,
     `Modeling the overall trend in the data, which can be linear or non-linear. Neural Prophet uses a piecewise linear trend to capture changes over time.`,
@@ -266,7 +480,7 @@ const getStepDescription = (step, iterations) => {
     `Training the model on historical data, adjusting parameters to minimize prediction errors. Backpropagation is used to optimize the neural network weights.`,
     `Generating forecasts for future time periods using the trained model. This combines all learned components to produce the final prediction.`
   ];
-  return `Iteration ${iterations}: ${descriptions[step]}`;
+  return descriptions[step];
 };
 
 const getStepMathConcept = (step) => {
@@ -274,13 +488,13 @@ const getStepMathConcept = (step) => {
     `Time series: y(t) = f(t) + ε(t)
      where f(t) is the signal and ε(t) is noise`,
     `Trend: g(t) = (k(t) + a(t)⋅t + ∑offset(t))
-     where k(t) is the base rate, a(t) is the growth rate`,
+     where k(t) is the base rate and a(t) is the growth rate`,
     `Seasonality: s(t) = ∑[a_n * sin(2πnt/P) + b_n * cos(2πnt/P)]
-     where P is the period, n is the fourier order`,
+     where P is the period and n is the fourier order`,
     `Auto-regression: AR(p): y_t = c + ∑φ_i * y_{t-i} + ε_t
-     where p is the order, φ_i are parameters`,
+     where p is the order and φ_i are parameters`,
     `Covariates: y(t) = g(t) + s(t) + ∑β_i * x_i(t) + AR(p)
-     where x_i are covariates, β_i are coefficients`,
+     where x_i are covariates and β_i are coefficients`,
     `Neural Network: h = σ(W_h * x + b_h)
                      y = W_o * h + b_o
      where σ is the activation function`,

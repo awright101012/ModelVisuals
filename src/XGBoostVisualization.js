@@ -184,7 +184,7 @@ const XGBoostVisualization = () => {
     return visualizations[step];
   };
 
-  const getStepDescription = (step, iterations) => {
+  const getStepDescription = (step) => {
     const descriptions = [
       `Loading input data with features (X) and target variables (Y). This step prepares the dataset for training, organizing features and their corresponding target values.`,
       `Making initial predictions using the mean of the target variable. This provides a baseline for the model to improve upon.`,
@@ -195,7 +195,7 @@ const XGBoostVisualization = () => {
       `Applying regularization techniques to prevent overfitting. This step penalizes complex models, balancing the trade-off between model complexity and performance. XGBoost uses both L1 (Lasso) and L2 (Ridge) regularization terms in its objective function.`,
       `Combining all trees in the ensemble for the final model. This aggregation of weak learners creates a strong predictive model. The final prediction is the sum of predictions from all trees, each scaled by the learning rate.`
     ];
-    return `Iteration ${iterations}: ${descriptions[step]}`;
+    return descriptions[step];
   };
 
   const getStepMathConcept = (step) => {
@@ -345,7 +345,7 @@ const XGBoostVisualization = () => {
         </div>
         <div className="text-left">
           <p className="text-gray-700 mb-4">
-            {getStepDescription(activeStep, iterations)}
+            {getStepDescription(activeStep)}
           </p>
           <div className="mt-4">
             <button
